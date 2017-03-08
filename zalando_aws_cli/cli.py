@@ -137,11 +137,16 @@ def require(ctx, account_role_or_alias, awsprofile):
 
     account_name, role_name = get_account_name_role_name(ctx.obj, account_role_or_alias)
 
-    last_update = ctx.obj['last_update'] if 'last_update' in ctx.obj else None
-    time_remaining = last_update['timestamp'] + 3600 * 0.9 - time.time() if last_update else 0
+    last_update = ctx.obj.get('last_update')
+    if last_update:
+        time_remaining = last_update['timestamp'] + 3600 * 0.9 - time.time()
+        last_account, last_role = last_update['account_name'], last_update['role_name']
+    else:
+        time_remaining = 0
+        last_account, last_role = None, None
 
-    if (time_remaining < 0 or
-            (account_name and (account_name, role_name) != (last_update['account_name'], last_update['role_name']))):
+    if time_remaining < 0 or
+           (account_name and (account_name, role_name) != (last_account, last_role)):
         ctx.invoke(login, account_role_or_alias=account_role_or_alias, refresh=False, awsprofile=awsprofile)
 
 
