@@ -145,7 +145,7 @@ def require(ctx, account_role_or_alias, awsprofile):
         time_remaining = 0
         last_account, last_role = None, None
 
-    if time_remaining < 0 or
+    if time_remaining < 0 or \
            (account_name and (account_name, role_name) != (last_account, last_role)):
         ctx.invoke(login, account_role_or_alias=account_role_or_alias, refresh=False, awsprofile=awsprofile)
 
